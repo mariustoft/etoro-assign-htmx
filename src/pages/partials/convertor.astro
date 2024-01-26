@@ -1,0 +1,99 @@
+---
+import { CURRENCIES, PORTFOLIO } from "../constants";
+
+let selectedCoin = "";
+let selectedCurrency = "";
+let selectedAmount = 1;
+let calculatedConversion = 0;
+
+try {
+  const formData = await Astro.request.formData();
+
+  selectedCoin = formData.get("coin").toString();
+  selectedCurrency = formData.get("currency").toString();
+  selectedAmount = Number(formData.get("amount"));
+
+  if (!selectedCoin || !selectedCurrency || !selectedAmount) return null;
+
+  const url = new URL("https://api.coingecko.com/api/v3" + "/simple/price");
+
+  url.searchParams.set("ids", selectedCoin.toString());
+  url.searchParams.set("vs_currencies", selectedCurrency.toString());
+  url.searchParams.set("amount", selectedAmount.toString());
+
+  const response = await fetch(url.toString());
+  const data = await response.json();
+
+  if (response.status !== 200) throw new Error();
+
+  calculatedConversion = data[selectedCoin][selectedCurrency] * selectedAmount;
+} catch {}
+---
+
+<form
+  class="w-full p-4 flex flex-col md:flex-row justify-start relative gap-2"
+  hx-post="/partials/convertor"
+  hx-swap="outerHTML"
+>
+  <!-- input field for converted amount -->
+  <input
+    class="p-2 text-xl font-black w-20 appearance-none border-2 border-black rounded-md"
+    required
+    autofocus'
+    value={selectedAmount}
+    type="number"
+    name="amount"
+    min={0}
+  />
+
+  <!-- selecttor for coin -->
+  <select
+    class="p-2 text-xl font-black w-30 appearance-none border-2 border-black rounded-md"
+    required
+    name="coin"
+  >
+    {
+      Object.keys(PORTFOLIO).map((coin) => (
+        <option
+          class="flex items-center justify-between bg-green cursor-pointer hover:text-green-500"
+          selected={coin === selectedCoin}
+        >
+          <span class="text-lg font-bold">{coin}</span>
+        </option>
+      ))
+    }
+  </select>
+
+  <!-- selector for currency -->
+  <select
+    class="p-2 text-xl font-black w-30 appearance-none border-2 border-black rounded-md"
+    required
+    name="currency"
+  >
+    {
+      CURRENCIES.map((currency) => (
+        <option
+          selected={currency === selectedCurrency}
+          class="flex items-center justify-between bg-green cursor-pointer hover:text-green-500"
+        >
+          <span class="text-lg font-bold">{currency}</span>
+        </option>
+      ))
+    }
+  </select>
+
+  <!-- submit button -->
+  <button
+    class="text-xlmd:text-xs font-bold b-1 bg-black border-green-500 border-2 rounded-md px-2 hover:bg-green-500 text-white"
+    type="submit"
+  >
+    Convert
+  </button>
+
+  <!-- total amount -->
+  <span class={"text-xl font-black  m-0"}>
+    Total // <br />
+    {calculatedConversion}
+    {selectedCurrency}
+  </span>
+</form>
