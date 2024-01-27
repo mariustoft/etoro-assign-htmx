@@ -2,17 +2,6 @@
 import { PORTFOLIO } from "../../constants";
 
 const { url } = Astro;
-
-// try {
-//   const formData = await Astro.request.formData();
-
-//   const url = new URL("https://api.coingecko.com/api/v3" + "/simple/price");
-
-//   const response = await fetch(url.toString());
-//   const data = await response.json();
-
-//   if (response.status !== 200) throw new Error();
-// } catch {}
 ---
 
 <form class="w-full p-4 bg-black text-white">
@@ -28,15 +17,12 @@ const { url } = Astro;
       Object.entries(PORTFOLIO).map(([key, value]) => {
         return (
           <div class="flex flex-row items-center justify-between p-2">
-            <button
-              // hx-target="/"
-              class="flex flex-row items-center justify-between gap-2 mr-1 rounded hover:text-green-500 my-1 bg-green font-bold"
-            >
+            <button class="flex flex-row items-center justify-between gap-2 mr-1 rounded hover:text-green-500 my-1 bg-green font-bold">
               {key}
             </button>
 
             <input
-              hx-replace-url="true"
+              hx-push-url="true"
               class="w-12 p-1 rounded text-black mx-2"
               type="number"
               value={url.searchParams.get(key) || value}
