@@ -1,0 +1,76 @@
+---
+import { CURRENCIES, PORTFOLIO } from "../constants";
+
+
+console.log("Astro.url.searchParams", Astro.url.searchParams);
+
+const portfolioValue = 0;
+Astro.url.searchParams
+
+// let selectedCoin = "";
+// let selectedCurrency = "";
+// let selectedAmount = 1;
+// let calculatedConversion = 0;
+
+try {
+  const formData = await Astro.request.formData();
+
+  const searchParams = new URLSearchParams(Astro.params);
+
+  // console.log("searchParams", searchParams);
+
+  // selectedCoin = formData.get("coin").toString();
+  // selectedCurrency = formData.get("currency").toString();
+  // selectedAmount = Number(formData.get("amount"));
+
+  // if (!selectedCoin || !selectedCurrency || !selectedAmount) return null;
+
+  const url = new URL("https://api.coingecko.com/api/v3" + "/simple/price");
+
+  // url.searchParams.set("ids", selectedCoin.toString());
+  // url.searchParams.set("vs_currencies", selectedCurrency.toString());
+  // url.searchParams.set("amount", selectedAmount.toString());
+
+  const response = await fetch(url.toString());
+  const data = await response.json();
+
+  if (response.status !== 200) throw new Error();
+
+  // calculatedConversion = data[selectedCoin][selectedCurrency] * selectedAmount;
+} catch {}
+---
+
+<form class="w-full p-4 gap-2">
+  {
+    Object.keys(PORTFOLIO).map((key) => {
+      return <input type="hidden" name={key} />;
+    })
+  }
+
+  <h1 class="text-2xl font-bold">Portfolio Value</h1>
+  <div class="flex py-1">
+    <h2 class="text-4xl font-bold">
+      {
+        Intl.NumberFormat("ds-DK", {
+          style: "currency",
+          currency: "USD",
+        }).format(portfolioValue || 0)
+      }
+    </h2>
+    <sub class="text-xs">
+      {
+        new Date().toLocaleString("da-DK", {
+          timeZoneName: "short",
+        })
+      }
+    </sub>
+  </div>
+
+  <button
+    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+  >
+    Calculate
+  </button>
+
+  <a href="/" class="hover:font-black">home</a>
+</form>
