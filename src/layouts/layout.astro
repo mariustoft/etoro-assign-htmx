@@ -1,5 +1,7 @@
 ---
 import Portfolio from "../pages/partials/portfolio.astro";
+
+const { url } = Astro;
 ---
 
 <html lang="en">
@@ -10,7 +12,7 @@ import Portfolio from "../pages/partials/portfolio.astro";
   </head>
   <body class="bg-slate-200 flex flex-col gap-4 text-color-red">
     <a
-      href="/"
+      href={"/?" + url.searchParams}
       class="text-4xl font-bold flex justify-around items-center text-center text-color-red m-1 relative"
     >
       <p
