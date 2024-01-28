@@ -1,41 +1,26 @@
 ---
-import { CURRENCIES, PORTFOLIO } from "../../constants";
+import { PORTFOLIO } from "../../constants";
 
-console.log("Astro.url.searchParams", Astro.url.searchParams);
-
-const portfolioValue = 0;
-Astro.url.searchParams;
-
-// let selectedCoin = "";
-// let selectedCurrency = "";
-// let selectedAmount = 1;
-// let calculatedConversion = 0;
+let portfolioValue = 0;
 
 try {
-  const formData = await Astro.request.formData();
-
-  const searchParams = new URLSearchParams(Astro.params);
-
-  // console.log("searchParams", searchParams);
-
-  // selectedCoin = formData.get("coin").toString();
-  // selectedCurrency = formData.get("currency").toString();
-  // selectedAmount = Number(formData.get("amount"));
-
-  // if (!selectedCoin || !selectedCurrency || !selectedAmount) return null;
-
   const url = new URL("https://api.coingecko.com/api/v3" + "/simple/price");
 
-  // url.searchParams.set("ids", selectedCoin.toString());
-  // url.searchParams.set("vs_currencies", selectedCurrency.toString());
-  // url.searchParams.set("amount", selectedAmount.toString());
+  url.searchParams.set(
+    "ids",
+    Object.keys({ ...PORTFOLIO, ...Astro.url.searchParams }).join(",")
+  );
+  url.searchParams.set("vs_currencies", "usd");
 
   const response = await fetch(url.toString());
+  if (response.status !== 200) return;
+
   const data = await response.json();
 
-  if (response.status !== 200) throw new Error();
-
-  // calculatedConversion = data[selectedCoin][selectedCurrency] * selectedAmount;
+  portfolioValue = Object.keys(data).reduce((acc, key) => {
+    const coinValue = data[key].usd * PORTFOLIO[key];
+    return acc + coinValue;
+  }, 0);
 } catch {}
 ---
 
