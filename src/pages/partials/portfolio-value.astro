@@ -6,10 +6,7 @@ let portfolioValue = 0;
 try {
   const url = new URL("https://api.coingecko.com/api/v3" + "/simple/price");
 
-  url.searchParams.set(
-    "ids",
-    Object.keys({ ...PORTFOLIO, ...Astro.url.searchParams }).join(",")
-  );
+  url.searchParams.set("ids", Object.keys({ ...PORTFOLIO }).join(","));
   url.searchParams.set("vs_currencies", "usd");
 
   const response = await fetch(url.toString());
@@ -18,43 +15,34 @@ try {
   const data = await response.json();
 
   portfolioValue = Object.keys(data).reduce((acc, key) => {
-    const coinValue = data[key].usd * PORTFOLIO[key];
+    const coinValue =
+      data[key].usd * (Astro.url.searchParams.get(key) || PORTFOLIO[key]);
     return acc + coinValue;
   }, 0);
 } catch {}
 ---
 
-<form class="w-full p-4 gap-2">
-  {
-    Object.keys(PORTFOLIO).map((key) => {
-      return <input type="hidden" name={key} />;
-    })
-  }
-
-  <h1 class="text-2xl font-bold">Portfolio Value</h1>
-  <div class="flex py-1">
-    <h2 class="text-4xl font-bold">
-      {
-        Intl.NumberFormat("ds-DK", {
-          style: "currency",
-          currency: "USD",
-        }).format(portfolioValue || 0)
-      }
-    </h2>
-    <sub class="text-xs">
-      {
-        new Date().toLocaleString("da-DK", {
-          timeZoneName: "short",
-        })
-      }
-    </sub>
-  </div>
+<section class="w-full px-4 gap-2">
+  <form hx-boost="true">
+    <h1 class="text-2xl font-bold">Portfolio Value</h1>
+    <div class="flex py-1">
+      <h2 class="text-4xl font-bold">
+        {
+          Intl.NumberFormat("da-DK", {
+            style: "currency",
+            currency: "USD",
+          }).format(portfolioValue || 0)
+        }
+      </h2>
+    </div>
+  </form>
 
   <button
     class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+    form="portfolio"
+    hx-trigger="click"
   >
     Calculate
   </button>
-
-  <a href="/" class="hover:font-black">home</a>
-</form>
+  <a href={"/?" + Astro.url.searchParams} class="hover:font-black">home</a>
+</section>

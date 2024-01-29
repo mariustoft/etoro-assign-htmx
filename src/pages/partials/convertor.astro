@@ -1,8 +1,6 @@
 ---
 import { CURRENCIES, PORTFOLIO } from "../../constants";
 
-console.log("Astro.url",Astro.url.searchParams);
-
 let selectedCoin = "";
 let selectedCurrency = "";
 let selectedAmount = 1;
@@ -11,9 +9,9 @@ let calculatedConversion = 0;
 try {
   const formData = await Astro.request.formData();
 
-  selectedCoin = formData.get("coin").toString();
-  selectedCurrency = formData.get("currency").toString();
-  selectedAmount = Number(formData.get("amount"));
+  selectedCoin = formData.get("selectedCoin").toString();
+  selectedCurrency = formData.get("selectedCurrency").toString();
+  selectedAmount = Number(formData.get("selectedAmount"));
 
   if (!selectedCoin || !selectedCurrency || !selectedAmount) return null;
 
@@ -45,7 +43,7 @@ try {
     autofocus'
     value={selectedAmount}
     type="number"
-    name="amount"
+    name="selectedAmount"
     min={0}
   />
 
@@ -53,7 +51,7 @@ try {
   <select
     class="p-2 text-xl font-black w-30 appearance-none border-2 border-black rounded-md"
     required
-    name="coin"
+    name="selectedCoin"
   >
     {
       Object.keys(PORTFOLIO).map((coin) => (
@@ -71,7 +69,7 @@ try {
   <select
     class="p-2 text-xl font-black w-30 appearance-none border-2 border-black rounded-md"
     required
-    name="currency"
+    name="selectedCurrency"
   >
     {
       CURRENCIES.map((currency) => (

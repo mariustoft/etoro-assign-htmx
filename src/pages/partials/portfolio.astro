@@ -4,7 +4,12 @@ import { PORTFOLIO } from "../../constants";
 const { url } = Astro;
 ---
 
-<form class="w-full p-4 bg-black text-white">
+<form
+  class="w-full p-4 bg-black text-white"
+  id="portfolio"
+  hx-boost="true"
+  action="/results"
+>
   <header class="flex flex-row items-baseline justify-start">
     <h2 class="text-2xl font-bold text-white my-1">Portfolio //</h2>
     <p class="text-xs font-bold text-green-100 m-1">
@@ -18,20 +23,17 @@ const { url } = Astro;
         return (
           <div class="flex flex-row items-center justify-between p-2">
             <button
-              hx-get="partials/convertor"
-              hx-target="#convertor"
+              hx-post="/partials/convertor"
               hx-swap="outerHTML"
-              hx-trigger="click"
-              hx-params="*"
-              hx-select-oob="#convertor"
+              hx-target="#convertor"
+              name="selectedCoin"
+              value={key}
               class="flex flex-row items-center justify-between gap-2 mr-1 rounded hover:text-green-500 my-1 bg-green font-bold"
             >
               {key}
             </button>
 
             <input
-              hx-replace-url="true"
-              hx-trigger="click"
               class="w-12 p-1 rounded text-black mx-2"
               type="number"
               value={url.searchParams.get(key) || value}
@@ -43,12 +45,9 @@ const { url } = Astro;
     }
   </div>
 
-  <a
-    href={"/results" + url.search}
-    type="submit"
-    hx-target="/"
+  <button
     class="text-xs font-bold b-1 border-green-500 border-2 rounded-md px-2 hover:bg-green-500 hover:text-white cursor-pointer"
   >
     {"Get total value in USD ⮕".toUpperCase()}
-  </a>
+  </button>
 </form>
