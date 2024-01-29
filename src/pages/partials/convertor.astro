@@ -92,9 +92,15 @@ try {
   </button>
 
   <!-- total amount -->
-  <span class={"text-xl font-black  m-0"}>
-    Total // <br />
-    {calculatedConversion}
-    {selectedCurrency}
-  </span>
+  {
+    selectedCurrency ? (
+      <span class={"text-xl font-black  m-0"}>
+        Total // <br />
+        {Intl.NumberFormat("da-DK", {
+          style: "currency",
+          currency: selectedCurrency || "",
+        }).format(calculatedConversion || 0)}
+      </span>
+    ) : null
+  }
 </form>
