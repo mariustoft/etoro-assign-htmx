@@ -17,12 +17,21 @@ const { url } = Astro;
       Object.entries(PORTFOLIO).map(([key, value]) => {
         return (
           <div class="flex flex-row items-center justify-between p-2">
-            <button class="flex flex-row items-center justify-between gap-2 mr-1 rounded hover:text-green-500 my-1 bg-green font-bold">
+            <button
+              hx-get="partials/convertor"
+              hx-target="#convertor"
+              hx-swap="outerHTML"
+              hx-trigger="click"
+              hx-params="*"
+              hx-select-oob="#convertor"
+              class="flex flex-row items-center justify-between gap-2 mr-1 rounded hover:text-green-500 my-1 bg-green font-bold"
+            >
               {key}
             </button>
 
             <input
-              hx-push-url="true"
+              hx-replace-url="true"
+              hx-trigger="click"
               class="w-12 p-1 rounded text-black mx-2"
               type="number"
               value={url.searchParams.get(key) || value}
